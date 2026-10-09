@@ -1,0 +1,533 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bella &amp; Beau</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one centered column; a hero with both kittens, then a photo card for each, adoption options, settling-in advice, steps and contact. */
+  :root {
+    --bg: #eef0f6;
+    --surface: #ffffff;
+    --ink: #1f2340;
+    --muted: #5c6183;
+    --line: #d6d9e8;
+    --marigold: #f0a43a;
+    --bella-soft: #e4e2f0;
+    --beau-soft: #dfe6e8;
+    --accent: #3b46a8;
+    --paw: rgba(31, 35, 64, 0.08);
+    --font-display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+    --font-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151829; --surface: #1f2338; --ink: #eceefa; --muted: #a3a8c6; --line: #33385a;
+      --bella-soft: #2d2f47; --beau-soft: #283540; --accent: #9aa4ff; --paw: rgba(236, 238, 250, 0.07); color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #151829; --surface: #1f2338; --ink: #eceefa; --muted: #a3a8c6; --line: #33385a;
+    --bella-soft: #2d2f47; --beau-soft: #283540; --accent: #9aa4ff; --paw: rgba(236, 238, 250, 0.07); color-scheme: dark;
+  }
+
+  /* Base styles target phones; min-width queries add room for tablets and desktops. */
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: var(--font-body); font-size: 1rem; line-height: 1.6;
+    padding-inline: 16px; padding-block: 0 calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+  .wrap { max-width: 980px; margin: 0 auto; display: grid; gap: 56px; position: relative; z-index: 1; }
+  #paws { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  h1, h2, h3 { font-family: var(--font-display); line-height: 1.05; text-wrap: balance; margin: 0; }
+  h2 { font-size: 1.85rem; font-weight: 800; letter-spacing: -0.02em; }
+  h3 { font-size: 1.25rem; font-weight: 700; }
+  p { margin: 0; }
+  a, button { -webkit-tap-highlight-color: transparent; }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .prose { max-width: 62ch; display: grid; gap: 12px; }
+  .prose p { color: var(--muted); }
+  .section-head { display: grid; gap: 8px; margin-bottom: 20px; }
+
+  /* Hero */
+  header.hero { display: grid; gap: 20px; padding-top: 24px; justify-items: center; text-align: center; }
+  .hero h1 { font-size: 2.9rem; font-weight: 800; letter-spacing: -0.035em; }
+  .hero h1 .amp { color: var(--marigold); font-weight: 500; }
+  .hero .lede { max-width: 46ch; color: var(--muted); font-size: 1.05rem; }
+  .pair-art { width: 100%; max-width: 520px; height: auto; display: block; }
+  .cta {
+    display: flex; align-items: center; justify-content: center; min-height: 52px; width: 100%;
+    background: var(--ink); color: var(--bg); text-decoration: none;
+    font-weight: 600; font-size: 1.05rem; padding: 14px 24px; border-radius: 999px;
+    transition: transform .2s ease;
+  }
+  .cta:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .facts {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px;
+    font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted);
+  }
+  .facts b { color: var(--ink); font-weight: 500; }
+
+  /* Cat animation */
+  .eye { transform-box: fill-box; transform-origin: center; animation: blink 5.5s infinite; }
+  .cat-b .eye { animation-delay: 1.7s; }
+  .tail { transform-box: fill-box; transform-origin: 0% 100%; animation: swish 3.2s ease-in-out infinite; }
+  .cat-b .tail { animation-delay: .8s; }
+  @keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(0.1); } }
+  @keyframes swish { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-7deg); } }
+
+  /* Kitten cards: stacked on phones */
+  .cards { display: grid; gap: 20px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+    overflow: hidden; display: grid; align-content: start; min-width: 0;
+  }
+  .photo { margin: 0; aspect-ratio: 1 / 1; max-width: 100%; overflow: hidden; }
+  .photo .main-photo { width: 100%; height: 100%; object-fit: cover; object-position: center 35%; display: block; transition: opacity .35s ease; }
+  .photo .main-photo.is-fading { opacity: 0; }
+  .photo.bella { background: var(--bella-soft); }
+  .photo.beau { background: var(--beau-soft); }
+  .thumbs {
+    display: flex; gap: 8px; padding: 12px 20px 0; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .thumbs::-webkit-scrollbar { display: none; }
+  .thumb {
+    flex: none; width: 56px; height: 56px; padding: 0; border-radius: 12px; overflow: hidden;
+    border: 2px solid transparent; background: var(--line); cursor: pointer; opacity: 0.7;
+    transition: opacity .2s ease, border-color .2s ease;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb.is-active { border-color: var(--ink); opacity: 1; }
+  .thumb:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .card-body { padding: 20px; display: grid; gap: 16px; }
+  .card h3 { font-size: 1.8rem; letter-spacing: -0.02em; }
+  .card-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .sex { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+  dl.stats {
+    margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 8px 16px;
+    font-size: 0.95rem; border-top: 1px solid var(--line); padding-top: 14px;
+  }
+  dl.stats dt { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+  dl.stats dd { margin: 0; min-width: 0; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+  .tags li { font-size: 0.85rem; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); }
+
+  /* Options */
+  .options { display: grid; gap: 24px; }
+  .choice { display: grid; }
+  .choice div { padding: 16px 0; border-top: 1px solid var(--line); display: grid; gap: 4px; }
+  .choice strong { font-family: var(--font-display); font-size: 1.2rem; }
+  .choice span { color: var(--muted); }
+
+  /* Settling in */
+  .checks { list-style: none; padding: 0; margin: 0; display: grid; }
+  .checks li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .checks svg { width: 22px; height: 22px; margin-top: 2px; }
+  .checks strong { display: block; font-weight: 600; }
+  .checks span { color: var(--muted); font-size: 0.95rem; }
+
+  /* Steps */
+  ol.steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 24px; counter-reset: step; }
+  ol.steps li { counter-increment: step; display: grid; gap: 6px; align-content: start; padding-top: 14px; border-top: 3px solid var(--ink); }
+  ol.steps li::before { content: "Step " counter(step); font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  ol.steps p { color: var(--muted); font-size: 0.95rem; }
+
+  /* Contact */
+  .contact {
+    background: var(--ink); color: var(--bg); border-radius: 22px;
+    padding: 28px 22px; display: grid; gap: 18px;
+  }
+  .contact h2 { color: var(--bg); }
+  .contact p { color: var(--bg); opacity: 0.8; max-width: 52ch; }
+  .contact .eyebrow { color: var(--bg); opacity: 0.7; }
+  .copy-btn {
+    font: 600 1rem var(--font-body); background: var(--marigold); color: #1f2340;
+    border: 0; border-radius: 999px; padding: 14px 22px; cursor: pointer;
+  }
+  .apply-btn {
+    display: flex; align-items: center; justify-content: center; min-height: 52px;
+    text-decoration: none; font-size: 1.05rem; transition: transform .2s ease;
+  }
+  .apply-btn:focus-visible { outline: 3px solid var(--marigold); outline-offset: 3px; }
+  .apply-choices { display: grid; gap: 10px; width: 100%; }
+  .apply-alt {
+    color: var(--bg); border: 1.5px solid color-mix(in srgb, var(--bg) 45%, transparent);
+    border-radius: 999px; padding: 14px 22px; font-weight: 600;
+  }
+  .card-apply {
+    display: flex; align-items: center; justify-content: center; min-height: 48px;
+    border: 1.5px solid var(--ink); border-radius: 999px; color: var(--ink);
+    font-weight: 600; text-decoration: none; transition: background .2s ease, color .2s ease;
+  }
+  .card-apply:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  footer { text-align: center; font-size: 0.85rem; color: var(--muted); }
+
+  /* Sticky apply bar, phones only */
+  .apply-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line);
+  }
+  .apply-bar .cta { max-width: 520px; margin: 0 auto; }
+
+  /* Larger phones and small tablets */
+  @media (min-width: 560px) {
+    body { padding-inline: 24px; }
+    .hero h1 { font-size: 4rem; }
+    .cta { width: auto; display: inline-flex; }
+    .apply-btn { display: inline-flex; padding-inline: 28px; }
+    .apply-choices { display: flex; flex-wrap: wrap; width: auto; }
+    .checks { grid-template-columns: 1fr 1fr; column-gap: 32px; }
+  }
+
+  /* Tablets and desktops */
+  @media (min-width: 820px) {
+    body { font-size: 1.05rem; padding-block: 0 64px; }
+    .wrap { gap: 88px; }
+    h2 { font-size: 2.5rem; }
+    h3 { font-size: 1.35rem; }
+    .section-head { margin-bottom: 28px; }
+    header.hero { gap: 28px; padding-top: 48px; }
+    .hero h1 { font-size: 5.4rem; }
+    .hero .lede { font-size: 1.15rem; }
+    .facts { font-size: 0.85rem; gap: 8px 22px; }
+    .cards { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .card-body { padding: 26px 28px 28px; }
+    .thumbs { padding: 14px 28px 0; }
+    .card h3 { font-size: 2rem; }
+    .options { grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    ol.steps { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .contact { padding: 56px; border-radius: 28px; gap: 22px; }
+    .apply-bar { display: none; }
+  }
+
+  @media (hover: hover) {
+    .cta:hover, .apply-btn:hover { transform: translateY(-2px); }
+    .card-apply:hover { background: var(--ink); color: var(--bg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .eye, .tail { animation: none; }
+    .cta, .apply-btn, .thumb, .photo .main-photo { transition: none; }
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- A sitting kitten, facing the viewer, tail curling to its right -->
+    <g id="cat">
+      <path class="tail" d="M150 196 C 196 198, 206 150, 182 122" fill="none" stroke="var(--c-fur)" stroke-width="15" stroke-linecap="round"/>
+      <ellipse cx="100" cy="160" rx="58" ry="52" fill="var(--c-fur)"/>
+      <path d="M48 146 h16 M46 160 h16 M48 174 h14 M152 146 h-16 M154 160 h-16 M152 174 h-14" stroke="var(--c-stripe)" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="100" cy="168" rx="26" ry="34" fill="var(--c-chest)"/>
+      <polygon points="62,66 68,20 98,48" fill="var(--c-fur)"/>
+      <polygon points="138,66 132,20 102,48" fill="var(--c-fur)"/>
+      <polygon points="70,54 72,32 88,48" fill="#f2b5ae"/>
+      <polygon points="130,54 128,32 112,48" fill="#f2b5ae"/>
+      <circle cx="100" cy="86" r="43" fill="var(--c-fur)"/>
+      <path d="M84 52 l4 12 M100 48 v14 M116 52 l-4 12 M60 86 h12 M140 86 h-12" stroke="var(--c-stripe)" stroke-width="4" stroke-linecap="round"/>
+      <ellipse cx="100" cy="104" rx="20" ry="13" fill="var(--c-muzzle)"/>
+      <ellipse class="eye" cx="84" cy="84" rx="6" ry="8" fill="var(--c-eye)"/>
+      <ellipse class="eye" cx="116" cy="84" rx="6" ry="8" fill="var(--c-eye)"/>
+      <path d="M95 98 h10 l-5 6 z" fill="#e0837a"/>
+      <path d="M100 104 q-5 7 -10 3 M100 104 q5 7 10 3" fill="none" stroke="#1f2340" stroke-width="2" stroke-linecap="round"/>
+      <path d="M78 102 h-24 M78 107 l-22 5 M122 102 h24 M122 107 l22 5" stroke="var(--c-whisker)" stroke-width="1.6" stroke-linecap="round"/>
+      <ellipse cx="80" cy="207" rx="15" ry="9" fill="var(--c-chest)"/>
+      <ellipse cx="120" cy="207" rx="15" ry="9" fill="var(--c-chest)"/>
+    </g>
+  </defs>
+</svg>
+
+<canvas id="paws" aria-hidden="true"></canvas>
+
+<div class="wrap">
+  <header class="hero">
+    <svg class="pair-art" viewBox="0 0 420 230" role="img" aria-label="Illustration of Bella, a black and white tuxedo kitten, and Beau, a grey tabby kitten, sitting side by side with their tails touching">
+      <g class="cat-a" style="--c-fur:#23262f;--c-stripe:#23262f;--c-chest:#f6f4ef;--c-muzzle:#f6f4ef;--c-eye:#d8c552;--c-whisker:#e6e8f0">
+        <use href="#cat" transform="translate(8,6)"/>
+      </g>
+      <g class="cat-b" style="--c-fur:#8e939e;--c-stripe:#5d626e;--c-chest:#c9ccd3;--c-muzzle:#d9dbe1;--c-eye:#1f2340;--c-whisker:#3b4152">
+        <use href="#cat" transform="translate(412,6) scale(-1,1)"/>
+      </g>
+      <path d="M210 92 c-6 -10 -20 -4 -14 6 l14 13 l14 -13 c6 -10 -8 -16 -14 -6z" fill="#e0837a"/>
+    </svg>
+    <span class="eyebrow">Kittens for adoption</span>
+    <h1>Bella <span class="amp">&amp;</span> Beau</h1>
+    <p class="lede">Two shy, playful 7-month-old kittens, fully vetted and ready for a forever home. Adopt them together or on their own.</p>
+    <div class="facts">
+      <span><b>7 months</b> old</span>
+      <span><b>Fully</b> vetted</span>
+      <span><b>Together</b> or separately</span>
+    </div>
+    <a class="cta" href="#adopt">Apply to adopt</a>
+  </header>
+
+  <section aria-labelledby="meet">
+    <div class="section-head">
+      <span class="eyebrow">Meet them</span>
+      <h2 id="meet">Bella and Beau</h2>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <figure class="photo bella">
+          <img class="main-photo" src="photos/bella-1.webp" alt="Bella looking up from the floor">
+        </figure>
+        <div class="thumbs" aria-label="More photos of Bella">
+            <button type="button" class="thumb is-active" data-src="photos/bella-1.webp" data-alt="Bella looking up from the floor" aria-label="Show photo: Bella looking up from the floor" aria-pressed="true"><img src="photos/bella-1.webp" alt="" loading="lazy"></button>
+            <button type="button" class="thumb" data-src="photos/bella-2.webp" data-alt="Bella curled up in a pink fluffy bed" aria-label="Show photo: Bella curled up in a pink fluffy bed" aria-pressed="false"><img src="photos/bella-2.webp" alt="" loading="lazy"></button>
+            <button type="button" class="thumb" data-src="photos/bella-3.webp" data-alt="Bella sitting on a cardboard scratcher" aria-label="Show photo: Bella sitting on a cardboard scratcher" aria-pressed="false"><img src="photos/bella-3.webp" alt="" loading="lazy"></button>
+            <button type="button" class="thumb" data-src="photos/bella-4.webp" data-alt="Bella stretched out by a door" aria-label="Show photo: Bella stretched out by a door" aria-pressed="false"><img src="photos/bella-4.webp" alt="" loading="lazy"></button>
+        </div>
+        <div class="card-body">
+          <div class="card-title"><h3>Bella</h3><span class="sex">Girl</span></div>
+          <dl class="stats">
+            <dt>Coat</dt><dd>Black and white tuxedo</dd>
+            <dt>Age</dt><dd>7 months</dd>
+            <dt>Vet care</dt><dd>Fully vetted</dd>
+            <dt>Nature</dt><dd>Shy but playful</dd>
+          </dl>
+          <ul class="tags"><li>Shy</li><li>Playful</li><li>Tuxedo</li></ul>
+          <a class="card-apply" href="https://docs.google.com/forms/d/e/1FAIpQLSdFi2lioVI90wCFy-eFAnrZiMyqrGRZ52Iul76FXUxGwFA5Sg/viewform?usp=pp_url&amp;entry.1149382613=Bella" target="_blank" rel="noopener">Apply to adopt Bella</a>
+        </div>
+      </article>
+      <article class="card">
+        <figure class="photo beau">
+          <img class="main-photo" src="photos/beau-1.webp" alt="Beau batting a purple toy mouse">
+        </figure>
+        <div class="thumbs" aria-label="More photos of Beau">
+            <button type="button" class="thumb is-active" data-src="photos/beau-1.webp" data-alt="Beau batting a purple toy mouse" aria-label="Show photo: Beau batting a purple toy mouse" aria-pressed="true"><img src="photos/beau-1.webp" alt="" loading="lazy"></button>
+            <button type="button" class="thumb" data-src="photos/beau-2.webp" data-alt="Beau looking up at a feather toy" aria-label="Show photo: Beau looking up at a feather toy" aria-pressed="false"><img src="photos/beau-2.webp" alt="" loading="lazy"></button>
+            <button type="button" class="thumb" data-src="photos/beau-3.webp" data-alt="Beau lying on the floor by the wall" aria-label="Show photo: Beau lying on the floor by the wall" aria-pressed="false"><img src="photos/beau-3.webp" alt="" loading="lazy"></button>
+            <button type="button" class="thumb" data-src="photos/beau-4.webp" data-alt="Beau lounging in a pink fluffy bed" aria-label="Show photo: Beau lounging in a pink fluffy bed" aria-pressed="false"><img src="photos/beau-4.webp" alt="" loading="lazy"></button>
+            <button type="button" class="thumb" data-src="photos/beau-5.webp" data-alt="Beau stretched out in a pink fluffy bed" aria-label="Show photo: Beau stretched out in a pink fluffy bed" aria-pressed="false"><img src="photos/beau-5.webp" alt="" loading="lazy"></button>
+            <button type="button" class="thumb" data-src="photos/beau-6.webp" data-alt="Beau rolling on the bed, with Bella behind him" aria-label="Show photo: Beau rolling on the bed, with Bella behind him" aria-pressed="false"><img src="photos/beau-6.webp" alt="" loading="lazy"></button>
+        </div>
+        <div class="card-body">
+          <div class="card-title"><h3>Beau</h3><span class="sex">Boy</span></div>
+          <dl class="stats">
+            <dt>Coat</dt><dd>Grey tabby with white</dd>
+            <dt>Age</dt><dd>7 months</dd>
+            <dt>Vet care</dt><dd>Fully vetted</dd>
+            <dt>Nature</dt><dd>Shy but playful</dd>
+          </dl>
+          <ul class="tags"><li>Shy</li><li>Playful</li><li>Tabby</li></ul>
+          <a class="card-apply" href="https://docs.google.com/forms/d/e/1FAIpQLSdFi2lioVI90wCFy-eFAnrZiMyqrGRZ52Iul76FXUxGwFA5Sg/viewform?usp=pp_url&amp;entry.1149382613=Beau" target="_blank" rel="noopener">Apply to adopt Beau</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="options" aria-labelledby="options">
+    <div class="prose">
+      <span class="eyebrow">Your choice</span>
+      <h2 id="options">Adopt one, or both</h2>
+      <p>Bella and Beau can go home together or to separate homes. Either way, they are looking for a forever home with people who will give them time to feel safe.</p>
+    </div>
+    <div class="choice">
+      <div><strong>Both together</strong><span>Two kittens keep each other company and play together while you are out.</span></div>
+      <div><strong>Bella or Beau on their own</strong><span>A good fit for a quiet home that wants one kitten.</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="settle">
+    <div class="section-head">
+      <span class="eyebrow">Settling in</span>
+      <h2 id="settle">Give them time to adjust</h2>
+      <p class="prose" style="color:var(--muted)">Shy kittens need a little time to get used to a new home. These steps help most kittens feel safe in the first few weeks.</p>
+    </div>
+    <ul class="checks">
+      <li><svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="var(--marigold)"/><path d="M6.5 11.5l3 3 6-6.5" fill="none" stroke="#1f2340" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong>Start with one quiet room</strong><span>Food, water, litter box and a bed in one place, then open up the house slowly.</span></div></li>
+      <li><svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="var(--marigold)"/><path d="M6.5 11.5l3 3 6-6.5" fill="none" stroke="#1f2340" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong>Offer places to hide</strong><span>A box or covered bed lets them watch from somewhere they feel safe.</span></div></li>
+      <li><svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="var(--marigold)"/><path d="M6.5 11.5l3 3 6-6.5" fill="none" stroke="#1f2340" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong>Let them come to you</strong><span>Sit on the floor and wait. Shy kittens warm up faster when they choose to.</span></div></li>
+      <li><svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="var(--marigold)"/><path d="M6.5 11.5l3 3 6-6.5" fill="none" stroke="#1f2340" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong>Play every day</strong><span>Wand toys are a great way to build trust with a playful but shy kitten.</span></div></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="how">
+    <div class="section-head">
+      <span class="eyebrow">How it works</span>
+      <h2 id="how">From hello to home</h2>
+    </div>
+    <ol class="steps">
+      <li><h3>Apply</h3><p>Fill in the application form. Say which kitten you are interested in, or both.</p></li>
+      <li><h3>Meet them</h3><p>Come and say hello. Go slowly, they are shy at first.</p></li>
+      <li><h3>Take them home</h3><p>They are fully vetted and ready to go.</p></li>
+    </ol>
+  </section>
+
+  <section class="contact" id="adopt" aria-labelledby="adopt-h">
+    <span class="eyebrow">Adopt</span>
+    <h2 id="adopt-h">Could you give them a forever home?</h2>
+    <p>Choose who you would like to adopt. The application form opens with their name already filled in.</p>
+    <div class="apply-choices">
+      <a class="copy-btn apply-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSdFi2lioVI90wCFy-eFAnrZiMyqrGRZ52Iul76FXUxGwFA5Sg/viewform?usp=pp_url&amp;entry.1149382613=Bella%20and%20Beau" target="_blank" rel="noopener">Apply for both</a>
+      <a class="apply-btn apply-alt" href="https://docs.google.com/forms/d/e/1FAIpQLSdFi2lioVI90wCFy-eFAnrZiMyqrGRZ52Iul76FXUxGwFA5Sg/viewform?usp=pp_url&amp;entry.1149382613=Bella" target="_blank" rel="noopener">Bella only</a>
+      <a class="apply-btn apply-alt" href="https://docs.google.com/forms/d/e/1FAIpQLSdFi2lioVI90wCFy-eFAnrZiMyqrGRZ52Iul76FXUxGwFA5Sg/viewform?usp=pp_url&amp;entry.1149382613=Beau" target="_blank" rel="noopener">Beau only</a>
+    </div>
+  </section>
+
+  <footer>Bella and Beau are 7 months old, fully vetted, and ready for a forever home.</footer>
+</div>
+
+<div class="apply-bar">
+  <a class="cta" href="#adopt">Apply to adopt</a>
+</div>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.card').forEach((card, cardIndex) => {
+    const main = card.querySelector('.main-photo');
+    const thumbs = [...card.querySelectorAll('.thumb')];
+    if (!main || !thumbs.length) return;
+    thumbs.forEach(t => { const img = new Image(); img.src = t.dataset.src; });
+    let current = 0, timer = null, paused = false;
+
+    const show = (i) => {
+      current = (i + thumbs.length) % thumbs.length;
+      const btn = thumbs[current];
+      thumbs.forEach(b => {
+        b.classList.toggle('is-active', b === btn);
+        b.setAttribute('aria-pressed', b === btn);
+      });
+      if (reduceMotion) { main.src = btn.dataset.src; main.alt = btn.dataset.alt; return; }
+      main.classList.add('is-fading');
+      setTimeout(() => {
+        main.src = btn.dataset.src;
+        main.alt = btn.dataset.alt;
+        main.classList.remove('is-fading');
+      }, 350);
+    };
+    const start = () => {
+      if (reduceMotion || paused || timer) return;
+      timer = setInterval(() => show(current + 1), 4000);
+    };
+    const stop = () => { clearInterval(timer); timer = null; };
+
+    thumbs.forEach((btn, i) => btn.addEventListener('click', () => {
+      stop(); show(i);
+      paused = true;
+      setTimeout(() => { paused = false; start(); }, 10000);
+    }));
+    card.addEventListener('mouseenter', stop);
+    card.addEventListener('mouseleave', start);
+    document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+    setTimeout(start, cardIndex * 2000);
+  });
+</script>
+
+<script>
+  // Paw-print trails that wander across the page background.
+  (() => {
+    const canvas = document.getElementById('paws');
+    const ctx = canvas && canvas.getContext('2d');
+    if (!ctx) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const STEP_MS = 420, FADE_IN = 250, HOLD = 2600, FADE_OUT = 1600;
+    let w = 0, h = 0, color = '', prints = [], trails = [], last = 0, raf = 0;
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = window.innerWidth; h = window.innerHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    const readColor = () => { color = getComputedStyle(document.documentElement).getPropertyValue('--paw').trim() || 'rgba(31,35,64,0.08)'; };
+
+    const newTrail = () => {
+      const edge = Math.floor(Math.random() * 4);
+      const pad = 30;
+      let x, y, angle;
+      if (edge === 0) { x = -pad; y = Math.random() * h; angle = (Math.random() - 0.5) * 1.2; }
+      else if (edge === 1) { x = w + pad; y = Math.random() * h; angle = Math.PI + (Math.random() - 0.5) * 1.2; }
+      else if (edge === 2) { x = Math.random() * w; y = -pad; angle = Math.PI / 2 + (Math.random() - 0.5) * 1.2; }
+      else { x = Math.random() * w; y = h + pad; angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.2; }
+      return { x, y, angle, turn: (Math.random() - 0.5) * 0.06, side: 1, stride: w < 600 ? 26 : 34, scale: w < 600 ? 0.95 : 1.25 };
+    };
+
+    // Cat print: a pad wider than tall with three lobes at the back, four oval toes fanned in front, no claws.
+    const blob = (cx, cy, rx, ry, rot) => {
+      ctx.moveTo(cx + rx * Math.cos(rot), cy + rx * Math.sin(rot));
+      ctx.ellipse(cx, cy, rx, ry, rot, 0, Math.PI * 2);
+    };
+    const drawPaw = (p, alpha) => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle + Math.PI / 2);
+      ctx.scale(p.scale, p.scale);
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      blob(0, 2.6, 6, 3.6, 0);
+      blob(-3.9, 5.4, 2.9, 2.7, 0);
+      blob(0, 6.4, 3.1, 2.9, 0);
+      blob(3.9, 5.4, 2.9, 2.7, 0);
+      blob(-6.6, -4, 1.9, 2.6, -0.45);
+      blob(-2.3, -7.4, 2, 2.8, -0.15);
+      blob(2.3, -7.4, 2, 2.8, 0.15);
+      blob(6.6, -4, 1.9, 2.6, 0.45);
+      ctx.fill();
+      ctx.restore();
+    };
+
+    const step = (t) => {
+      t.angle += t.turn + (Math.random() - 0.5) * 0.08;
+      t.x += Math.cos(t.angle) * t.stride;
+      t.y += Math.sin(t.angle) * t.stride;
+      t.side *= -1;
+      const ox = Math.cos(t.angle + Math.PI / 2) * 6 * t.side;
+      const oy = Math.sin(t.angle + Math.PI / 2) * 6 * t.side;
+      prints.push({ x: t.x + ox, y: t.y + oy, angle: t.angle, scale: t.scale, born: performance.now() });
+    };
+    const offscreen = (t) => t.x < -80 || t.x > w + 80 || t.y < -80 || t.y > h + 80;
+
+    const frame = (now) => {
+      if (now - last > STEP_MS) {
+        last = now;
+        const wanted = w < 600 ? 1 : 2;
+        while (trails.length < wanted) trails.push(newTrail());
+        trails.forEach(step);
+        trails = trails.filter(t => !offscreen(t));
+      }
+      ctx.clearRect(0, 0, w, h);
+      prints = prints.filter(p => now - p.born < FADE_IN + HOLD + FADE_OUT);
+      prints.forEach(p => {
+        const age = now - p.born;
+        const a = age < FADE_IN ? age / FADE_IN : age < FADE_IN + HOLD ? 1 : 1 - (age - FADE_IN - HOLD) / FADE_OUT;
+        drawPaw(p, Math.max(0, a));
+      });
+      raf = requestAnimationFrame(frame);
+    };
+
+    // With reduced motion, leave a single still trail instead of animating.
+    const drawStill = () => {
+      ctx.clearRect(0, 0, w, h);
+      const t = { x: w * 0.1, y: h * 0.85, angle: -0.5, turn: 0.02, side: 1, stride: 34, scale: 1.1 };
+      prints = [];
+      for (let i = 0; i < 18; i++) step(t);
+      prints.forEach(p => drawPaw(p, 1));
+      prints = [];
+    };
+
+    const start = () => {
+      cancelAnimationFrame(raf);
+      if (reduceMotion.matches) { drawStill(); return; }
+      raf = requestAnimationFrame(frame);
+    };
+    resize(); readColor(); start();
+    window.addEventListener('resize', () => { resize(); if (reduceMotion.matches) drawStill(); });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { readColor(); if (reduceMotion.matches) drawStill(); });
+    new MutationObserver(readColor).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    reduceMotion.addEventListener('change', start);
+    document.addEventListener('visibilitychange', () => document.hidden ? cancelAnimationFrame(raf) : start());
+  })();
+</script>
